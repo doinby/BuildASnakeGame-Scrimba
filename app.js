@@ -23,14 +23,16 @@ currentSnake.forEach(index => {
 })
 
 function move() {
-    // Remove tail
-    const tail = currentSnake[currentSnake.length - 1];
-    $squares[tail].classList.remove('snake');
+  // Remove snake's tail
+  const tail = currentSnake[currentSnake.length - 1];
+  $squares[tail].classList.remove("snake");
 
-    // Draw new head
-    currentSnake = currentSnake.map((snakeElement) => snakeElement + direction);
-    const head = currentSnake[0];
-    $squares[head].classList.add("snake");
+  // Draw new snake's head
+  currentSnake = currentSnake.map((snakeElement) => snakeElement + direction);
+  const head = currentSnake[0];
+  $squares[head].classList.add("snake");
 }
 
 move();
+
+setInterval(move, 1000);
