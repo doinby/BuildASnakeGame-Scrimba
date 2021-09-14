@@ -5,6 +5,7 @@ const $score = document.querySelector('#score');
 let squares = [];
 let currentSnake = [2, 1, 0];
 let direction = 1;
+let width = 10;
 
 function createGrid() {
     for(let i = 0; i < 100; i++) {
@@ -23,16 +24,34 @@ currentSnake.forEach(index => {
 })
 
 function move() {
-  // Remove snake's tail
-  const tail = currentSnake[currentSnake.length - 1];
-  $squares[tail].classList.remove("snake");
-
-  // Draw new snake's head
-  currentSnake = currentSnake.map((snakeElement) => snakeElement + direction);
-  const head = currentSnake[0];
-  $squares[head].classList.add("snake");
+    //remove last element from our currentSnake array
+    const tail = currentSnake.pop();
+    //remove styling from last element
+    $squares[tail].classList.remove("snake");
+    //add square in direction we are heading
+    currentSnake.unshift(currentSnake[0] + direction);
+    //add styling so we can see it
+    $squares[currentSnake[0]].classList.add("snake");
 }
 
-move();
+let timeId = setInterval(move, 1000);
 
-setInterval(move, 1000);
+document.addEventListener('keydown', event => {
+    switch (event.code) {
+        case "ArrowDown":
+        direction = width;
+        break;
+        case "ArrowUp":
+        direction = -width;
+        break;
+        case "ArrowLeft": 
+        direction = -1;
+        break;
+        case "ArrowRight": 
+        direction = 1;
+        break;
+        default:
+        return;
+    }
+    move();
+})
