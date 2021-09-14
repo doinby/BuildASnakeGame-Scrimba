@@ -25,5 +25,8 @@ body {
     height: 20px;
     width: 20px;
     /* border: 1px solid black; */
-    background: lightblue;
+}
+
+.snake {
+    background: darkgreen;
 }
