@@ -4,8 +4,9 @@ const $score = document.querySelector('#score');
 
 const width = 10;
 let squares = [];
-let currentSnake = [11, 12, 13];
+let currentSnake = [2, 1, 0];
 let direction = 1;
+let appleIndex = 0;
 
 function createGrid() {
     for(let i = 0; i < width*width; i++) {
@@ -39,11 +40,29 @@ function move() {
     currentSnake.unshift(currentSnake[0] + direction);
     // add styling so we can see it
     $squares[currentSnake[0]].classList.add("snake");
+
+    $squares.forEach(square => {
+        if(square.classList.contains('apple snake')) {
+            square.classList.remove('apple');
+            console.log('eaten');
+        }
+    })
 }
 
 move();
 let timeId = setInterval(move, 1000);
 
+
+function generateApples() {
+    do {
+        appleIndex = Math.floor(Math.random() * $squares.length);
+    } while($squares[appleIndex].classList.contains('snake')) // while square is snake, find another square
+    // When square is not snake, draw an apple
+    $squares[appleIndex].classList.add('apple');
+}
+generateApples();
+
+// Snake control
 document.addEventListener('keyup', event => {
     switch (event.code) {
         case "ArrowDown":
@@ -61,5 +80,4 @@ document.addEventListener('keyup', event => {
         default:
         return;
     }
-    move();
 })
