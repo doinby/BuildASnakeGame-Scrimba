@@ -6,7 +6,9 @@ const width = 10;
 let squares = [];
 let currentSnake = [2, 1, 0];
 let direction = 1;
-let appleIndex = 0;
+let appleIndex = 5;
+let score = 0;
+let speed = 1000;
 
 function createGrid() {
     for(let i = 0; i < width*width; i++) {
@@ -24,6 +26,15 @@ currentSnake.forEach(index => {
     $squares[index].classList.add('snake');
 })
 
+function generateApples() {
+    do {
+        appleIndex = Math.floor(Math.random() * $squares.length);
+    } while($squares[appleIndex].classList.contains('snake')) // while square is snake, find another square
+    // When square is not snake, draw an apple
+    $squares[appleIndex].classList.add('apple');
+}
+generateApples();
+
 function move() {
     if ((currentSnake[0] + width >= width * width && direction === width) || // if snake has hit bottom
     (currentSnake[0] % width === width - 1 && direction === 1) || // if snake has hit right wall
@@ -40,27 +51,30 @@ function move() {
     currentSnake.unshift(currentSnake[0] + direction);
     // add styling so we can see it
     $squares[currentSnake[0]].classList.add("snake");
+    
+    // When snake eats apple
+    if ($squares[currentSnake[0]].classList.contains("apple")) {
+        // Remove apple
+        $squares[currentSnake[0]].classList.remove('apple');
+        // Grow snake's tail by one
+        $squares[tail].classList.add('snake');
+        currentSnake.push(tail);
+        
+        generateApples();
 
-    $squares.forEach(square => {
-        if(square.classList.contains('apple snake')) {
-            square.classList.remove('apple');
-            console.log('eaten');
-        }
-    })
+        // Display score
+        score += 1;
+        $score.textContent = `${score}`;
+
+        // Speed up the game
+        clearInterval(timeId);
+        speed -= 100;
+        timeId = setInterval(move, speed);
+    }
 }
 
 move();
-let timeId = setInterval(move, 1000);
-
-
-function generateApples() {
-    do {
-        appleIndex = Math.floor(Math.random() * $squares.length);
-    } while($squares[appleIndex].classList.contains('snake')) // while square is snake, find another square
-    // When square is not snake, draw an apple
-    $squares[appleIndex].classList.add('apple');
-}
-generateApples();
+let timeId = setInterval(move, speed);
 
 // Snake control
 document.addEventListener('keyup', event => {
