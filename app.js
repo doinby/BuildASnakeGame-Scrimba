@@ -8,7 +8,10 @@ let currentSnake = [2, 1, 0];
 let direction = 1;
 let appleIndex = 5;
 let score = 0;
-let speed = 1000;
+let intervalTime = 1000;
+let speed = 0.9;
+let isGameOver = true;
+let timeId = 0;
 
 function createGrid() {
     for(let i = 0; i < width*width; i++) {
@@ -35,13 +38,17 @@ function generateApples() {
 }
 generateApples();
 
+
+
 function move() {
     if ((currentSnake[0] + width >= width * width && direction === width) || // if snake has hit bottom
     (currentSnake[0] % width === width - 1 && direction === 1) || // if snake has hit right wall
     (currentSnake[0] % width === 0 && direction === -1) || // if snake has hit left wall
     (currentSnake[0] - width < 0 && direction === -width) || // if snake has hit top
-    $squares[currentSnake[0] + direction].classList.contains('snake')) // hits itself
-    return clearInterval(timerId);
+    $squares[currentSnake[0] + direction].classList.contains('snake')) {// hits itself
+        isGameOver = true;
+        return clearInterval(timerId);
+    }
     
     // remove last element from our currentSnake array
     const tail = currentSnake.pop();
@@ -61,37 +68,45 @@ function move() {
         currentSnake.push(tail);
         
         generateApples();
-
+        
         // Display score
         score += 1;
         $score.textContent = `${score}`;
-
+        
         // Speed up the game
         clearInterval(timeId);
-        speed -= 100;
-        timeId = setInterval(move, speed);
+        intervalTime = intervalTime * speed;
+        timeId = setInterval(move, intervalTime);
     }
 }
 
-move();
-let timeId = setInterval(move, speed);
+function startGame() {
+    isGameOver = false;
+    timeId = setInterval(move, intervalTime);
+    move();
+}
+
+$startButton.addEventListener('click', startGame);
+
 
 // Snake control
 document.addEventListener('keyup', event => {
-    switch (event.code) {
-        case "ArrowDown":
-        direction = width;
-        break;
-        case "ArrowUp":
-        direction = -width;
-        break;
-        case "ArrowLeft": 
-        direction = -1;
-        break;
-        case "ArrowRight": 
-        direction = 1;
-        break;
-        default:
-        return;
+    if(!isGameOver) {
+        switch (event.code) {
+            case "ArrowDown":
+            direction = width;
+            break;
+            case "ArrowUp":
+            direction = -width;
+            break;
+            case "ArrowLeft": 
+            direction = -1;
+            break;
+            case "ArrowRight": 
+            direction = 1;
+            break;
+            default:
+            return;
+        }
     }
 })
